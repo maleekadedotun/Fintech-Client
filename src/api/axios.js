@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:9000/api/v1", // replace with your backend URL
+     // replace with your backend URL
+    // baseURL: "http://localhost:9000/api/v1",
+    baseURL: "https://fintech-backend-q0r8.onrender.com/api/v1",
     headers: {
         "Content-Type": "application/json",
     },
