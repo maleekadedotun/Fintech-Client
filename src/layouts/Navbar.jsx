@@ -6,13 +6,13 @@ import {
 } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Navbar({
     sidebarOpen,
     setSidebarOpen
 }) {
-
-    
+    const navigate = useNavigate();
 
     const user = useSelector(
         state => state.auth.user
@@ -124,6 +124,7 @@ function Navbar({
                 {/* Notification */}
 
                 <button
+                    onClick={() => navigate("/notifications")}
                     className="
                         relative
 

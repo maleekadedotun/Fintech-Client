@@ -9,6 +9,10 @@ import {
   FaSignOutAlt,
   FaUniversity,
   FaShieldAlt,
+  FaCalendarAlt,
+  FaUserFriends,
+  FaFileAlt,
+  FaBell,
 } from "react-icons/fa";
 
 import { NavLink } from "react-router-dom";
@@ -36,19 +40,34 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       path: "/transactions",
     },
     {
-      name: "Bills",
+      name: "Bills & Utilities",
       icon: <FaMoneyCheckAlt />,
       path: "/bills",
     },
     {
-      name: "Profile",
-      icon: <FaUserCircle />,
-      path: "/profile",
+      name: "Autopay & Schedules",
+      icon: <FaCalendarAlt />,
+      path: "/schedule",
     },
-     {
+    {
+      name: "Beneficiaries",
+      icon: <FaUserFriends />,
+      path: "/beneficiaries",
+    },
+    {
+      name: "Statement",
+      icon: <FaFileAlt />,
+      path: "/statement",
+    },
+    {
+      name: "Notifications",
+      icon: <FaBell />,
+      path: "/notifications",
+    },
+    {
       name: "Security",
       icon: <FaShieldAlt />,
-      path: "/Security",
+      path: "/security",
     },
   ];
 

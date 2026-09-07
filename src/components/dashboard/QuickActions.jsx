@@ -4,9 +4,12 @@ import {
     FaWifi,
     FaBolt,
     FaTv,
-    FaUniversity,
-    FaCreditCard,
+    FaGlobe,
+    FaFutbol,
+    FaGraduationCap,
     FaShieldAlt,
+    FaCalendarAlt,
+    FaMoneyCheckAlt,
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
@@ -41,7 +44,7 @@ export function QuickActions() {
         {
             title: "Electricity",
             icon: <FaBolt />,
-            color: "bg-yellow-500",
+            color: "bg-amber-500",
             path: "/electricity",
         },
 
@@ -53,24 +56,24 @@ export function QuickActions() {
         },
 
         {
-            title: "Bank",
-            icon: <FaUniversity />,
+            title: "Internet",
+            icon: <FaGlobe />,
+            color: "bg-sky-600",
+            path: "/internet",
+        },
+
+        {
+            title: "Betting",
+            icon: <FaFutbol />,
+            color: "bg-emerald-600",
+            path: "/betting",
+        },
+
+        {
+            title: "More Bills",
+            icon: <FaMoneyCheckAlt />,
             color: "bg-indigo-600",
-            path: "/banks",
-        },
-
-        {
-            title: "Cards",
-            icon: <FaCreditCard />,
-            color: "bg-pink-600",
-            path: "/cards",
-        },
-
-        {
-            title: "Security",
-            icon: <FaShieldAlt />,
-            color: "bg-slate-700",
-            path: "/security",
+            path: "/bills",
         },
 
     ];
