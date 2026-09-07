@@ -4,7 +4,7 @@ import { FaEnvelope, FaFingerprint } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { loginStart, loginSuccess, loginFailure } from "../../features/auth/authSlice";
 import { login } from "../../features/auth/authService";
@@ -66,7 +66,7 @@ function Login() {
       // navigate("/dashboard");
       if (response.role === "admin") {
         navigate("/admin/dashboard");
-      } 
+      }
       else {
         navigate("/dashboard");
       }
@@ -207,6 +207,26 @@ function Login() {
             Login
 
           </button>
+          {/* LOGIN LINK */}
+          <p className="text-center text-slate-500 mt-6">
+
+            If you don't have an account?
+
+            <Link
+              to="/register"
+
+              className="
+                ml-2
+                text-blue-600
+                font-semibold
+                hover:text-blue-800
+                transition
+              "
+            >
+              Register
+            </Link>
+
+          </p>
 
         </form>
 

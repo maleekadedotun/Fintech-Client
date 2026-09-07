@@ -36,6 +36,7 @@ import Schedule from "./components/schedule/Schedule";
 import Beneficiaries from "./components/beneficiary/Beneficiaries";
 import Statement from "./components/statement/Statement";
 import Notifications from "./components/notification/Notifications";
+import Register from "./pages/Auth/Register";
 
 function App() {
     return (
@@ -50,6 +51,11 @@ function App() {
                 <Route
                     path="/"
                     element={<Login />}
+                />
+
+                <Route
+                    path="/register"
+                    element={<Register />}
                 />
 
                 <Route
