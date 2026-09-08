@@ -7,36 +7,45 @@
 // }
 
 // export default App;
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+// Eagerly loaded auth & route protectors
 import Login from "./pages/Auth/Login";
 import ProtectedRoute from "./routes/protectedRoute";
 import AdminProtectedRoute from "./routes/adminProtectedRoute";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
-import UserDashboard from "./pages/Dashboard/UserDashboard";
-import Transfer from "./pages/User/Transfer";
-import Security from "./pages/User/Security";
-import Transactions from "./pages/User/Transactions";
-import Success from "./pages/Payment/Success";
-import Cancel from "./pages/Payment/Cancel";
-import { Wallet } from "./pages/Wallet/Wallet";
-import { Airtime } from "./components/airtime/Airtime";
-import { Data } from "./components/data/Data";
 
-// Newly Connected Feature Components & Pages
-import Bills from "./pages/Bills/Bills";
-import Electricity from "./components/electricity/Electricity";
-import Cable from "./components/cable/Cable";
-import Internet from "./components/internet/Internet";
-import Betting from "./components/betting/Betting";
-import Education from "./components/education/Education";
-import Insurance from "./components/insurance/Insurance";
-import Schedule from "./components/schedule/Schedule";
-import Beneficiaries from "./components/beneficiary/Beneficiaries";
-import Statement from "./components/statement/Statement";
-import Notifications from "./components/notification/Notifications";
-import Register from "./pages/Auth/Register";
+// Code-split pages and feature components
+const Register = lazy(() => import("./pages/Auth/Register"));
+const AdminDashboard = lazy(() => import("./pages/Dashboard/AdminDashboard"));
+const UserDashboard = lazy(() => import("./pages/Dashboard/UserDashboard"));
+const Transfer = lazy(() => import("./pages/User/Transfer"));
+const Security = lazy(() => import("./pages/User/Security"));
+const Transactions = lazy(() => import("./pages/User/Transactions"));
+const Success = lazy(() => import("./pages/Payment/Success"));
+const Cancel = lazy(() => import("./pages/Payment/Cancel"));
+const Wallet = lazy(() => import("./pages/Wallet/Wallet").then((m) => ({ default: m.Wallet })));
+const Airtime = lazy(() => import("./components/airtime/Airtime").then((m) => ({ default: m.Airtime })));
+const Data = lazy(() => import("./components/data/Data").then((m) => ({ default: m.Data })));
+const Bills = lazy(() => import("./pages/Bills/Bills"));
+const Electricity = lazy(() => import("./components/electricity/Electricity"));
+const Cable = lazy(() => import("./components/cable/Cable"));
+const Internet = lazy(() => import("./components/internet/Internet"));
+const Betting = lazy(() => import("./components/betting/Betting"));
+const Education = lazy(() => import("./components/education/Education"));
+const Insurance = lazy(() => import("./components/insurance/Insurance"));
+const Schedule = lazy(() => import("./components/schedule/Schedule"));
+const Beneficiaries = lazy(() => import("./components/beneficiary/Beneficiaries"));
+const Statement = lazy(() => import("./components/statement/Statement"));
+const Notifications = lazy(() => import("./components/notification/Notifications"));
+
+const PageLoader = () => (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-cyan-500 rounded-full animate-spin"></div>
+        <span className="mt-3 text-xs font-medium text-slate-500 tracking-wider uppercase">Loading...</span>
+    </div>
+);
 
 function App() {
     return (
@@ -47,7 +56,8 @@ function App() {
                     duration: 4000,
                 }}
             />
-            <Routes>
+            <Suspense fallback={<PageLoader />}>
+                <Routes>
                 <Route
                     path="/"
                     element={<Login />}
@@ -267,6 +277,7 @@ function App() {
                     }
                 />
             </Routes>
+        </Suspense>
         </BrowserRouter>
     );
 }
