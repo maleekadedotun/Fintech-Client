@@ -5,20 +5,28 @@ import {
   FaExchangeAlt,
   FaReceipt,
   FaMoneyCheckAlt,
-  FaUserCircle,
-  FaSignOutAlt,
   FaUniversity,
-  FaShieldAlt,
   FaCalendarAlt,
   FaUserFriends,
   FaFileAlt,
   FaBell,
+  FaUserShield,
 } from "react-icons/fa";
 
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
-  const menuItems = [
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.role === "admin" || user?.isAdmin;
+
+  const adminItem = {
+    name: "Admin Portal",
+    icon: <FaUserShield className="text-cyan-400" />,
+    path: "/admin/dashboard",
+  };
+
+  const baseMenuItems = [
     {
       name: "Dashboard",
       icon: <FaTachometerAlt />,
@@ -64,12 +72,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       icon: <FaBell />,
       path: "/notifications",
     },
-    {
-      name: "Security",
-      icon: <FaShieldAlt />,
-      path: "/security",
-    },
   ];
+
+  const menuItems = isAdmin ? [adminItem, ...baseMenuItems] : baseMenuItems;
 
   return (
     <aside
@@ -135,7 +140,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
       {/* Navigation */}
 
-      <nav className="px-4 py-6 space-y-2">
+      <nav className="px-4 py-6 space-y-2 overflow-y-auto max-h-[calc(100vh-100px)]">
 
         {menuItems.map((item) => (
           <NavLink
@@ -175,37 +180,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
         ))}
 
       </nav>
-
-      {/* Bottom Section */}
-
-      <div className="absolute bottom-0 w-full border-t border-slate-800 p-4">
-
-        <button
-          className="
-            w-full
-
-            flex
-            items-center
-            gap-4
-
-            px-4
-            py-3
-
-            rounded-xl
-
-            text-red-400
-
-            hover:bg-red-500/10
-            transition
-          "
-        >
-          <FaSignOutAlt />
-
-          Logout
-
-        </button>
-
-      </div>
     </aside>
   );
 }

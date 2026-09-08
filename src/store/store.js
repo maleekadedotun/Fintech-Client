@@ -8,6 +8,7 @@ import dataReducer from "../features/data/dataSlice";
 import internetReducer from "../features/internet/internetSlice";
 import cableReducer from "../features/cable/cableSlice";
 import educationReducer from "../features/education/educationSlice";
+import adminReducer from "../features/admin/adminSlice";
 
 export const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
         internet: internetReducer,
         cable: cableReducer,
         education: educationReducer,
+        admin: adminReducer,
     },
 });
 
