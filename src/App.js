@@ -272,3 +272,5 @@ function App() {
 }
 
 export default App;
+
+// https://dashboard.render.com/static/srv-dafei8lbedkc738u747g/redirects
