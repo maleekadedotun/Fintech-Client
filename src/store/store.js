@@ -9,6 +9,7 @@ import internetReducer from "../features/internet/internetSlice";
 import cableReducer from "../features/cable/cableSlice";
 import educationReducer from "../features/education/educationSlice";
 import adminReducer from "../features/admin/adminSlice";
+import kycReducer from "../features/kyc/kycSlice";
 
 export const store = configureStore({
     reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
         cable: cableReducer,
         education: educationReducer,
         admin: adminReducer,
+        kyc: kycReducer,
     },
 });
 

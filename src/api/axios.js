@@ -1,9 +1,17 @@
 import axios from "axios";
 
+// Automatically target localhost when running locally, or Render in production
+const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1");
+
+const baseURL = isLocal
+    ? "http://localhost:9000/api/v1"
+    : "https://fintech-backend-q0r8.onrender.com/api/v1";
+
 const api = axios.create({
-     // replace with your backend URL
-    // baseURL: "http://localhost:9000/api/v1",
-    baseURL: "https://fintech-backend-q0r8.onrender.com/api/v1",
+    baseURL,
     headers: {
         "Content-Type": "application/json",
     },

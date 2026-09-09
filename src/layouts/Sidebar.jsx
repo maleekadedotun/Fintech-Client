@@ -11,6 +11,7 @@ import {
   FaFileAlt,
   FaBell,
   FaUserShield,
+  FaIdCard,
 } from "react-icons/fa";
 
 import { NavLink } from "react-router-dom";
@@ -46,6 +47,11 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       name: "Transactions",
       icon: <FaReceipt />,
       path: "/transactions",
+    },
+    {
+      name: "Identity & KYC",
+      icon: <FaIdCard />,
+      path: "/kyc",
     },
     {
       name: "Bills & Utilities",

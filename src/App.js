@@ -23,6 +23,7 @@ const UserDashboard = lazy(() => import("./pages/Dashboard/UserDashboard"));
 const Transfer = lazy(() => import("./pages/User/Transfer"));
 const Security = lazy(() => import("./pages/User/Security"));
 const Transactions = lazy(() => import("./pages/User/Transactions"));
+const KYC = lazy(() => import("./pages/User/KYC"));
 const Success = lazy(() => import("./pages/Payment/Success"));
 const Cancel = lazy(() => import("./pages/Payment/Cancel"));
 const Wallet = lazy(() => import("./pages/Wallet/Wallet").then((m) => ({ default: m.Wallet })));
@@ -117,6 +118,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Transactions />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/kyc"
+                    element={
+                        <ProtectedRoute>
+                            <KYC />
                         </ProtectedRoute>
                     }
                 />

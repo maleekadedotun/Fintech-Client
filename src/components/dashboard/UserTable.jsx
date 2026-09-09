@@ -1,4 +1,7 @@
 import React, { useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFreezeUserAction } from "../../features/admin/adminSlice";
+import toast from "react-hot-toast";
 import {
     FaSearch,
     FaUserCheck,
@@ -8,12 +11,18 @@ import {
     FaUserShield,
     FaChevronLeft,
     FaChevronRight,
+    FaLock,
+    FaUnlock,
+    FaCheckCircle,
 } from "react-icons/fa";
 
 function UserTable({ users, loading }) {
+    const dispatch = useDispatch();
+    const { freezingUserId } = useSelector((state) => state.admin);
     const [searchTerm, setSearchTerm] = useState("");
     const [kycFilter, setKycFilter] = useState("all");
     const [roleFilter, setRoleFilter] = useState("all");
+    const [statusFilter, setStatusFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 8;
 
@@ -36,9 +45,35 @@ function UserTable({ users, loading }) {
                 (roleFilter === "admin" && (u.role === "admin" || u.isAdmin)) ||
                 (roleFilter === "user" && u.role !== "admin" && !u.isAdmin);
 
-            return matchesSearch && matchesKyc && matchesRole;
+            const matchesStatus =
+                statusFilter === "all" ||
+                (statusFilter === "frozen" && u.isFrozen) ||
+                (statusFilter === "active" && !u.isFrozen);
+
+            return matchesSearch && matchesKyc && matchesRole && matchesStatus;
         });
-    }, [users, searchTerm, kycFilter, roleFilter]);
+    }, [users, searchTerm, kycFilter, roleFilter, statusFilter]);
+
+    const handleToggleFreeze = async (user) => {
+        if (user.role === "admin" || user.isAdmin) {
+            toast.error("Admin accounts cannot be frozen");
+            return;
+        }
+
+        const willFreeze = !user.isFrozen;
+        const confirmMsg = willFreeze
+            ? `Are you sure you want to freeze ${user.name || user.email}'s account? Outgoing transfers and bill payments will be blocked.`
+            : `Unfreeze ${user.name || user.email}'s account and restore transaction privileges?`;
+
+        if (!window.confirm(confirmMsg)) return;
+
+        const res = await dispatch(toggleFreezeUserAction(user._id));
+        if (toggleFreezeUserAction.fulfilled.match(res)) {
+            toast.success(res.payload?.message || (willFreeze ? "Account frozen" : "Account unfrozen"));
+        } else {
+            toast.error(res.payload || "Failed to update account restriction");
+        }
+    };
 
     // Pagination
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage) || 1;
@@ -135,6 +170,22 @@ function UserTable({ users, loading }) {
                             <option value="user">Standard Users</option>
                         </select>
                     </div>
+
+                    {/* Account Status Filter */}
+                    <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200 text-xs">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => {
+                                setStatusFilter(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="bg-transparent text-slate-700 font-medium py-1 px-2 focus:outline-none cursor-pointer"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active Only</option>
+                            <option value="frozen">Frozen Only</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -147,7 +198,9 @@ function UserTable({ users, loading }) {
                             <th className="pb-3">Role</th>
                             <th className="pb-3">KYC Status</th>
                             <th className="pb-3">Tier</th>
+                            <th className="pb-3">Account Status</th>
                             <th className="pb-3">Registered</th>
+                            <th className="pb-3 text-right pr-3">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-sm">
@@ -166,7 +219,9 @@ function UserTable({ users, loading }) {
                                     <td className="py-4"><div className="h-4 bg-slate-200 rounded w-16"></div></td>
                                     <td className="py-4"><div className="h-4 bg-slate-200 rounded w-20"></div></td>
                                     <td className="py-4"><div className="h-4 bg-slate-200 rounded w-12"></div></td>
+                                    <td className="py-4"><div className="h-4 bg-slate-200 rounded w-16"></div></td>
                                     <td className="py-4"><div className="h-4 bg-slate-200 rounded w-20"></div></td>
+                                    <td className="py-4 text-right pr-3"><div className="h-4 bg-slate-200 rounded w-16 ml-auto"></div></td>
                                 </tr>
                             ))
                         ) : paginatedUsers.length > 0 ? (
@@ -186,6 +241,8 @@ function UserTable({ users, loading }) {
                                           year: "numeric",
                                       })
                                     : "N/A";
+
+                                const isFreezing = freezingUserId === user._id;
 
                                 return (
                                     <tr
@@ -237,15 +294,65 @@ function UserTable({ users, loading }) {
                                             </span>
                                         </td>
 
+                                        {/* Account Status Badge */}
+                                        <td className="py-3.5">
+                                            {user.isFrozen ? (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                                    <FaLock className="text-[10px]" />
+                                                    Frozen
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <FaCheckCircle className="text-[10px]" />
+                                                    Active
+                                                </span>
+                                            )}
+                                        </td>
+
                                         <td className="py-3.5 text-xs text-slate-500">
                                             {formattedDate}
+                                        </td>
+
+                                        {/* Actions: Freeze / Unfreeze */}
+                                        <td className="py-3.5 text-right pr-3">
+                                            {isAdmin ? (
+                                                <span className="text-[11px] text-slate-400 italic">
+                                                    Protected
+                                                </span>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    disabled={isFreezing}
+                                                    onClick={() => handleToggleFreeze(user)}
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition active:scale-95 disabled:opacity-50 ${
+                                                        user.isFrozen
+                                                            ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-300 shadow-sm"
+                                                            : "bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-300"
+                                                    }`}
+                                                    title={user.isFrozen ? "Unfreeze account" : "Freeze account"}
+                                                >
+                                                    {isFreezing ? (
+                                                        <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                                                    ) : user.isFrozen ? (
+                                                        <>
+                                                            <FaUnlock className="text-[10px]" />
+                                                            <span>Unfreeze</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FaLock className="text-[10px]" />
+                                                            <span>Freeze</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 );
                             })
                         ) : (
                             <tr>
-                                <td colSpan={5} className="py-10 text-center text-slate-400 text-xs">
+                                <td colSpan={7} className="py-10 text-center text-slate-400 text-xs">
                                     No accounts match your current filter criteria.
                                 </td>
                             </tr>

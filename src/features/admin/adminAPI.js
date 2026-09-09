@@ -41,3 +41,29 @@ export const approveWithdrawal = async (withdrawalId) => {
     const response = await api.put(`/withdrawal/admin/withdrawals/${withdrawalId}/approve`);
     return response.data;
 };
+
+// --- KYC Admin Endpoints ---
+
+// Fetch all pending KYC submissions
+export const getPendingKYC = async () => {
+    const response = await api.get("/kyc/kyc-pending");
+    return response.data;
+};
+
+// Approve a user's KYC
+export const approveKYC = async (userId) => {
+    const response = await api.patch(`/kyc/kyc-verify/${userId}`);
+    return response.data;
+};
+
+// Reject a user's KYC
+export const rejectKYC = async (userId, reason = "") => {
+    const response = await api.patch(`/kyc/kyc-reject/${userId}`, { reason });
+    return response.data;
+};
+
+// Freeze or Unfreeze a user account
+export const toggleFreezeUser = async (userId) => {
+    const response = await api.patch(`/admins/users/${userId}/toggle-freeze`);
+    return response.data;
+};

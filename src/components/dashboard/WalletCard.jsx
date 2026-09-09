@@ -14,7 +14,8 @@ import {
     FaCheck,
 } from "react-icons/fa";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchMyKYCStatus } from "../../features/kyc/kycSlice";
 // import { useEffect, useState } from "react";
 // import { getWalletBalance } from "../../features/wallet/walletService";
 import { getWalletBalance } from "../../features/transactions/transactionService";
@@ -86,44 +87,19 @@ export function WalletCard() {
             setWalletLoading(false);
         }
     };
-    // Refresh
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth.user);
+    const kyc = useSelector((state) => state.kyc);
+
     useEffect(() => {
         fetchWallet();
-    }, []);
+        dispatch(fetchMyKYCStatus());
+    }, [dispatch]);
 
-    // User
-    const user = useSelector(
-        state => state.auth.user
-    );
-
-    // useEfect
-    useEffect(() => {
-        const fetchWallet = async () => {
-            try {
-                setWalletLoading(true);
-
-                const response = await getWalletBalance();
-
-                console.log(
-                    "Wallet response:",
-                    response
-                );
-
-                setWallet(response);
-
-            } catch (error) {
-                console.error(
-                    "Wallet error:",
-                    error.response?.data ||
-                    error.message
-                );
-            } finally {
-                setWalletLoading(false);
-            }
-        };
-
-        fetchWallet();
-    }, []);
+    const currentTier = kyc?.tier || user?.tier || 1;
+    const activeKycStatus = kyc?.kycStatus || user?.kycStatus || "unverified";
+    const isVerified = activeKycStatus === "verified" || currentTier >= 2;
+    const isPending = activeKycStatus === "pending" && !isVerified;
 
     const paymentHandler = async (data) => {
 
@@ -476,11 +452,21 @@ export function WalletCard() {
 
                         </div>
 
-                        <div className="  flex items-center   gap-2">
-                            <FaCreditCard />
-
-                            Tier 1
-
+                        <div className="flex items-center gap-2">
+                            <FaCreditCard className={isVerified ? "text-emerald-400" : "text-cyan-400"} />
+                            <span className="font-semibold text-xs sm:text-sm">
+                                Tier {currentTier}
+                            </span>
+                            {isVerified && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Verified
+                                </span>
+                            )}
+                            {isPending && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
+                                    Pending
+                                </span>
+                            )}
                         </div>
 
                     </div>

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import AdminStats from "../../components/dashboard/AdminStats";
 import RevenueChart from "../../components/dashboard/RevenueChart";
+import AdminKYCPanel from "../../components/dashboard/AdminKYCPanel";
 import AdminQuickActions from "../../components/dashboard/AdminQuickActions";
 import UserTable from "../../components/dashboard/UserTable";
 import { loadFullAdminDashboard } from "../../features/admin/adminSlice";
@@ -106,12 +107,15 @@ function AdminDashboard() {
                     loading={loading}
                 />
 
-                {/* Section 3: Administrative Quick Actions & High-Volume Accounts */}
+                {/* Section 3: Identity Verification & KYC Queue */}
+                <AdminKYCPanel />
+
+                {/* Section 4: Administrative Quick Actions & High-Volume Accounts */}
                 <AdminQuickActions
                     topUsers={topUsers}
                 />
 
-                {/* Section 4: Registered Customer Directory Table */}
+                {/* Section 5: Registered Customer Directory Table */}
                 <UserTable
                     users={allUsers}
                     loading={loading}

@@ -34,3 +34,24 @@ export const adminApproveWithdrawal = async (withdrawalId) => {
     const response = await adminAPI.approveWithdrawal(withdrawalId);
     return response;
 };
+
+// KYC services
+export const adminGetPendingKYC = async () => {
+    const response = await adminAPI.getPendingKYC();
+    return response?.data || response;
+};
+
+export const adminApproveKYC = async (userId) => {
+    const response = await adminAPI.approveKYC(userId);
+    return response;
+};
+
+export const adminRejectKYC = async (userId, reason) => {
+    const response = await adminAPI.rejectKYC(userId, reason);
+    return response;
+};
+
+export const adminToggleFreezeUser = async (userId) => {
+    const response = await adminAPI.toggleFreezeUser(userId);
+    return response;
+};
