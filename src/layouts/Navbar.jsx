@@ -9,10 +9,13 @@ import {
     FaUserShield,
     FaIdCard,
 } from "react-icons/fa";
+// import { getNotifications } from "../../features/notification/notificationService";
+// getNotifications
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../features/auth/authSlice";
+import { getNotifications } from "../features/notification/notificationService";
 
 function Navbar({
     sidebarOpen,
@@ -21,6 +24,7 @@ function Navbar({
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const dropdownRef = useRef(null);
 
     const user = useSelector((state) => state.auth.user);
@@ -41,6 +45,33 @@ function Navbar({
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
+    }, []);
+
+    const fetchNotifications = async () => {
+        try {
+            const data = await getNotifications();
+            const notifications = data.notifications || data;
+            const unread = Array.isArray(notifications)
+                ? notifications.filter((n) => !n.isRead).length
+                : 0;
+            setUnreadCount(unread);
+        } catch (error) {
+            console.error('Failed to fetch notifications', error);
+        }
+    };
+
+    // Initial load
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    // Listen for updates from Notifications component
+    useEffect(() => {
+        const handler = () => {
+            fetchNotifications();
+        };
+        window.addEventListener('notificationsUpdated', handler);
+        return () => window.removeEventListener('notificationsUpdated', handler);
     }, []);
 
     const handleLogout = () => {
@@ -144,7 +175,7 @@ function Navbar({
                             justify-center
                         "
                     >
-                        1
+                        {unreadCount}
                     </span>
                 </button>
 
@@ -197,9 +228,8 @@ function Navbar({
                         </div>
 
                         <FaChevronDown
-                            className={`text-slate-400 text-xs transition-transform duration-200 ${
-                                dropdownOpen ? "rotate-180 text-cyan-600" : ""
-                            }`}
+                            className={`text-slate-400 text-xs transition-transform duration-200 ${dropdownOpen ? "rotate-180 text-cyan-600" : ""
+                                }`}
                         />
                     </button>
 
@@ -222,11 +252,10 @@ function Navbar({
                                         {user?.role || "User"}
                                     </span>
                                     <span
-                                        className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                                            isVerified
+                                        className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${isVerified
                                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                                 : "bg-slate-100 text-slate-600 border-slate-200"
-                                        }`}
+                                            }`}
                                     >
                                         Tier {currentTier} {isVerified ? "• Verified" : ""}
                                     </span>

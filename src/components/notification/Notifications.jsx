@@ -63,6 +63,8 @@ export const Notifications = () => {
                 prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
             );
             toast.success("Marked as read");
+            // Notify other components (e.g., Navbar) to refresh count
+            window.dispatchEvent(new Event('notificationsUpdated'));
         } catch (error) {
             // Optimistic update
             setNotifications((prev) =>
@@ -74,6 +76,8 @@ export const Notifications = () => {
     const handleMarkAllAsRead = async () => {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         toast.success("All notifications marked as read");
+        // Notify other components (e.g., Navbar) to refresh count
+        window.dispatchEvent(new Event('notificationsUpdated'));
     };
 
     const filteredNotifications = notifications.filter((n) => {
@@ -141,11 +145,10 @@ export const Notifications = () => {
                             <button
                                 key={t.id}
                                 onClick={() => setFilter(t.id)}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
-                                    filter === t.id
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition ${filter === t.id
                                         ? "bg-slate-900 text-white"
                                         : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                                }`}
+                                    }`}
                             >
                                 {t.label}
                             </button>
@@ -172,11 +175,10 @@ export const Notifications = () => {
                             {filteredNotifications.map((n) => (
                                 <div
                                     key={n._id}
-                                    className={`p-4 sm:p-5 rounded-2xl border transition flex items-start justify-between gap-4 ${
-                                        !n.isRead
+                                    className={`p-4 sm:p-5 rounded-2xl border transition flex items-start justify-between gap-4 ${!n.isRead
                                             ? "border-cyan-200 bg-cyan-50/40"
                                             : "border-slate-100 bg-white hover:bg-slate-50/60"
-                                    }`}
+                                        }`}
                                 >
                                     <div className="flex items-start gap-3.5">
                                         <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-base shrink-0 mt-0.5">
