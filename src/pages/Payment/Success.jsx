@@ -366,7 +366,7 @@ function Success() {
 
                     <button
                         onClick={() =>
-                            navigate("/user/dashboard")
+                            navigate("/dashboard")
                         }
                         className="
                         mt-7
